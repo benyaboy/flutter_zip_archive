@@ -38,7 +38,10 @@ public class FlutterZipArchivePlugin implements MethodCallHandler {
     @Override
     public void onMethodCall(MethodCall call, Result result) {
         switch (call.method) {
-            case "zip":
+            case "zipDir":
+                new ZipTask(call, result).execute();
+                break;
+            case "zipFile":
                 new ZipTask(call, result).execute();
                 break;
             case "unzip":
@@ -126,30 +129,12 @@ public class FlutterZipArchivePlugin implements MethodCallHandler {
         return m1;
     }
 
-    /**
-     * 使用给定密码解压指定的ZIP压缩文件到指定目录
-     * <p>
-     * 如果指定目录不存在,可以自动创建,不合法的路径将导致异常被抛出
-     *
-     * @param zip    指定的ZIP压缩文件
-     * @param dest   解压目录
-     * @param passwd ZIP文件的密码
-     * @return 解压后文件数组
-     * @throws ZipException 压缩文件有损坏或者解压缩失败抛出
-     */
+
     public File[] unzip(String zip, String dest, String passwd) throws ZipException {
         File zipFile = new File(zip);
         return unzip(zipFile, dest, passwd);
     }
 
-    /**
-     * 使用给定密码解压指定的ZIP压缩文件到当前目录
-     *
-     * @param zip    指定的ZIP压缩文件
-     * @param passwd ZIP文件的密码
-     * @return 解压后文件数组
-     * @throws ZipException 压缩文件有损坏或者解压缩失败抛出
-     */
 
 
     public File[] unzip(String zip, String passwd) throws ZipException {
@@ -159,17 +144,7 @@ public class FlutterZipArchivePlugin implements MethodCallHandler {
         return unzip(zipFile, parentDir.getAbsolutePath(), passwd);
     }
 
-    /**
-     * 使用给定密码解压指定的ZIP压缩文件到指定目录
-     * <p>
-     * 如果指定目录不存在,可以自动创建,不合法的路径将导致异常被抛出
-     *
-     * @param zipFile 指定的ZIP压缩文件
-     * @param dest    解压目录
-     * @param passwd  ZIP文件的密码
-     * @return 解压后文件数组
-     * @throws ZipException 压缩文件有损坏或者解压缩失败抛出
-     */
+
     public File[] unzip(File zipFile, String dest, String passwd) throws ZipException {
         ZipFile zFile = new ZipFile(zipFile);
         zFile.setFileNameCharset("GBK");
@@ -197,23 +172,11 @@ public class FlutterZipArchivePlugin implements MethodCallHandler {
         return extractedFiles;
     }
 
-    /**
-     * 压缩指定文件到当前文件夹
-     *
-     * @param src 要压缩的指定文件
-     * @return 最终的压缩文件存放的绝对路径, 如果为null则说明压缩失败.
-     */
     public String zip(String src) {
         return zip(src, null);
     }
 
-    /**
-     * 使用给定密码压缩指定文件或文件夹到当前目录
-     *
-     * @param src    要压缩的文件
-     * @param passwd 压缩使用的密码
-     * @return 最终的压缩文件存放的绝对路径, 如果为null则说明压缩失败.
-     */
+
     public String zip(String src, String passwd) {
         return zip(src, null, passwd);
     }
@@ -254,14 +217,6 @@ public class FlutterZipArchivePlugin implements MethodCallHandler {
         return null;
     }
 
-    /**
-     * 构建压缩文件存放路径,如果不存在将会创建
-     * 传入的可能是文件名或者目录,也可能不传,此方法用以转换最终压缩文件的存放路径
-     *
-     * @param srcFile   源文件
-     * @param destParam 压缩目标路径
-     * @return 正确的压缩文件存放路径
-     */
     private String buildDestinationZipFilePath(File srcFile, String destParam) {
         if (destParam == null || destParam == "") {
             if (srcFile.isDirectory()) {
@@ -285,11 +240,6 @@ public class FlutterZipArchivePlugin implements MethodCallHandler {
         return destParam;
     }
 
-    /**
-     * 在必要的情况下创建压缩文件存放目录,比如指定的存放路径并没有被创建
-     *
-     * @param destParam 指定的存放路径,有可能该路径并没有被创建
-     */
     private void createDestDirectoryIfNecessary(String destParam) {
         File destDir = null;
         if (destParam.endsWith(File.separator)) {

@@ -1,0 +1,16 @@
+.idea/flutter_zip_achieve.iml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/workspace.xml
+.idea/codeStyles/Project.xml
+.idea/libraries/Dart_SDK.xml
+.idea/libraries/Flutter_Plugins.xml
+example/android/.gradle/
+example/android/.idea/
+example/build/
+.flutter-plugins
+example/android/android.iml
+example/android/app/app.iml
+GeneratedPluginRegistrant.java
+WorkspaceSettings.xcsettings
+Runner-Bridging-Header.h

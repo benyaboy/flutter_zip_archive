@@ -11,15 +11,17 @@
 }
 
 - (void)handleMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
-  if ([@"zip" isEqualToString:call.method]) {
-      [self zip:call result:result];
-  }else if ([@"unzip" isEqualToString:call.method]) {
+  if ([@"zipDir" isEqualToString:call.method]) {
+      [self zipDir:call result:result];
+  } else if ([@"zipFile" isEqualToString:call.method]) {
+      [self zipFile:call result: result];
+  } else if ([@"unzip" isEqualToString:call.method]) {
       [self unzip:call result:result];
   } else {
     result(FlutterMethodNotImplemented);
   }
 }
-- (void)zip:(FlutterMethodCall*)call result:(FlutterResult)result {
+- (void)zipDir:(FlutterMethodCall*)call result:(FlutterResult)result {
     NSString *src =call.arguments[@"src"];
     NSString *dest =call.arguments[@"dest"];
     NSString *password =call.arguments[@"password"];
@@ -43,6 +45,25 @@
     }
     result(m1);
     
+}
+
+- (void)zipFile:(FlutterMethodCall*)call result:(FlutterResult)result {
+    NSString *src =call.arguments[@"src"];
+    NSString *dest =call.arguments[@"dest"];
+    NSString *password =call.arguments[@"password"];
+    NSDictionary *m1 =nil;
+    BOOL success = [SSZipArchive createZipFileAtPath:dest withFilesAtPaths:@[src] withPassword:password];
+    if(success){
+        m1= @{
+              @"result":  @"success",
+              @"path": dest,
+              };
+    }else{
+        m1= @{
+              @"result":  @"fail"
+              };
+    }
+    result(m1);
 }
 
 - (void)unzip:(FlutterMethodCall*)call result:(FlutterResult)result {
