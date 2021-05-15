@@ -62,12 +62,17 @@ class _MyAppState extends State<MyApp> {
   Future _selectFile() async {
     Directory tempDir = await getTemporaryDirectory();
 
-    var _map = await zipArchiver.zipFile(
-      sourceFilePath: tempDir.path + '/BEVIS_v6.xd',
-      archiveDestinationDirectoryPath: tempDir.path + '/new_123.zip',
-      password: '1234',
-    );
-    print("_map:" + _map.toString());
+    try {
+      var zipPath = await zipArchiver.zipFile(
+        sourceFilePath: tempDir.path + '/android.zip',
+        archiveDestinationDirectoryPath: tempDir.path + '/new_123.zip',
+        password: '1234',
+      );
+
+      print(zipPath);
+    } on ZipArchiverException catch (e) {
+      print(e.toString());
+    }
   }
 
   Future _unzip() async {

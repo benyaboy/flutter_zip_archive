@@ -7,7 +7,7 @@ class ZipArchiverChannel {
   static const MethodChannel _zipArchiveChannel =
       const MethodChannel('flutter_zip_archive');
 
-  Future<Map> invokeZipFileMethod({
+  Future<String> invokeZipFileMethod({
     @required String sourceFilePath,
     @required String archiveDestinationDirectoryPath,
     String password,
@@ -24,7 +24,7 @@ class ZipArchiverChannel {
         }..removeNullValues());
   }
 
-  Future<Map> invokeZipDirectoryMethod({
+  Future<String> invokeZipDirectoryMethod({
     @required String sourceDirPath,
     @required String archiveDestinationDirPath,
     String password,

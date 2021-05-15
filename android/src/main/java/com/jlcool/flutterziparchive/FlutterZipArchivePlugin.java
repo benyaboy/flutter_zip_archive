@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.exception.ZipExceptionConstants;
 import net.lingala.zip4j.model.FileHeader;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
@@ -53,7 +54,7 @@ public class FlutterZipArchivePlugin implements MethodCallHandler {
         }
     }
 
-    private class ZipTask extends AsyncTask<Void, Void, Map<String, Object>> {
+    private class ZipTask extends AsyncTask<Void, Void, String> {
         private MethodCall call;
         private Result result;
 
@@ -63,30 +64,32 @@ public class FlutterZipArchivePlugin implements MethodCallHandler {
         }
 
         @Override
-        protected Map<String, Object> doInBackground(Void... params) {
+        protected String doInBackground(Void... params) {
             return zip(call, result);
         }
 
         @Override
-        protected void onPostExecute(Map<String, Object> data) {
+        protected void onPostExecute(String data) {
             super.onPostExecute(data);
-            this.result.success(data);
+            if(data != null) {
+                this.result.success(data);
+            } else {
+                this.result.error("failure", null, null);
+            }
         }
     }
 
-    public Map<String, Object> zip(MethodCall call, Result result) {
+    public String zip(MethodCall call, Result result) {
         String src = call.argument("src");
         String dest = call.argument("dest");
         String passwd = call.argument("password");
         Map<String, Object> m1 = new HashMap();
-        String path = zip(src, dest, passwd);
-        if (path == null) {
-            m1.put("result", "fail");
-        } else {
-            m1.put("result", "success");
-            m1.put("path", path);
+        try {
+            String createdZipPath = zip(src, dest, passwd);
+            return createdZipPath;
+        } catch (ZipException e) {
+            return null;
         }
-        return m1;
     }
 
     private class UnZipTask extends AsyncTask<Void, Void, Map<String, Object>> {
@@ -136,7 +139,6 @@ public class FlutterZipArchivePlugin implements MethodCallHandler {
     }
 
 
-
     public File[] unzip(String zip, String passwd) throws ZipException {
         File zipFile = new File(zip);
 
@@ -172,18 +174,8 @@ public class FlutterZipArchivePlugin implements MethodCallHandler {
         return extractedFiles;
     }
 
-    public String zip(String src) {
-        return zip(src, null);
-    }
 
-
-    public String zip(String src, String passwd) {
-        return zip(src, null, passwd);
-    }
-
-
-    public String zip(String src, String dest, String passwd) {
-
+    public String zip(String src, String dest, String passwd) throws ZipException {
 
         File srcFile = new File(src);
         dest = buildDestinationZipFilePath(srcFile, dest);
@@ -195,26 +187,18 @@ public class FlutterZipArchivePlugin implements MethodCallHandler {
             parameters.setEncryptionMethod(Zip4jConstants.ENC_METHOD_STANDARD); // 加密方式
             parameters.setPassword(passwd.toCharArray());
         }
-        try {
-            ZipFile zipFile = new ZipFile(dest);
-            if (srcFile.isDirectory()) {
-                // 如果不创建目录的话,将直接把给定目录下的文件压缩到压缩文件,即没有目录结构
 
-                File[] subFiles = srcFile.listFiles();
-                ArrayList<File> temp = new ArrayList<File>();
-                Collections.addAll(temp, subFiles);
-                zipFile.addFiles(temp, parameters);
-                return dest;
-
-
-            } else {
-                zipFile.addFile(srcFile, parameters);
-            }
+        ZipFile zipFile = new ZipFile(dest);
+        if (srcFile.isDirectory()) {
+            File[] subFiles = srcFile.listFiles();
+            ArrayList<File> temp = new ArrayList<File>();
+            Collections.addAll(temp, subFiles);
+            zipFile.addFiles(temp, parameters);
             return dest;
-        } catch (ZipException e) {
-            e.printStackTrace();
+        } else {
+            zipFile.addFile(srcFile, parameters);
         }
-        return null;
+        return dest;
     }
 
     private String buildDestinationZipFilePath(File srcFile, String destParam) {
