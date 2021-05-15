@@ -1,5 +1,6 @@
 #import "FlutterZipArchivePlugin.h"
 #import "SSZipArchive.h"
+#import "SSZipArchiveWithoutAES.h"
 
 @implementation FlutterZipArchivePlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar>*)registrar {
@@ -52,7 +53,7 @@
     NSString *dest =call.arguments[@"dest"];
     NSString *password =call.arguments[@"password"];
     NSDictionary *m1 =nil;
-    BOOL success = [SSZipArchive createZipFileAtPath:dest withFilesAtPaths:@[src] withPassword:password];
+    BOOL success = [SSZipArchiveWithoutAES createZipFileAtPath:dest withFilesAtPaths:@[src] withPassword:password];
     if(success){
         m1= @{
               @"result":  @"success",

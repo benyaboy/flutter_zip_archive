@@ -65,7 +65,7 @@ class _MyAppState extends State<MyApp> {
     var _map = await zipArchiver.zipFile(
       sourceFilePath: tempDir.path + '/BEVIS_v6.xd',
       archiveDestinationDirectoryPath: tempDir.path + '/new_123.zip',
-      //password: '1234',
+      password: '1234',
     );
     print("_map:" + _map.toString());
   }
