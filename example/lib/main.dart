@@ -64,7 +64,7 @@ class _MyAppState extends State<MyApp> {
 
     try {
       var zipPath = await zipArchiver.zipFile(
-        sourceFilePath: tempDir.path + '/android.zip',
+        sourceFilePath: tempDir.path + '/BEVIS_v6.xd',
         archiveDestinationDirectoryPath: tempDir.path + '/new_123.zip',
         password: '1234',
       );

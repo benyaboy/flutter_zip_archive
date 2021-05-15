@@ -26,7 +26,6 @@
     NSString *src =call.arguments[@"src"];
     NSString *dest =call.arguments[@"dest"];
     NSString *password =call.arguments[@"password"];
-    NSDictionary *m1 =nil;
     BOOL success = [SSZipArchive createZipFileAtPath:dest
                              withContentsOfDirectory:src
                                  keepParentDirectory:NO
@@ -35,36 +34,26 @@
                                                  AES:NO
                                      progressHandler:nil];
     if(success){
-        m1= @{
-              @"result":  @"success",
-              @"path": dest,
-              };
+        result(dest);
     }else{
-        m1= @{
-              @"result":  @"fail"
-              };
+        result([FlutterError errorWithCode:@"Failure"
+                                 message:nil
+                                 details:nil]);
     }
-    result(m1);
-    
 }
 
 - (void)zipFile:(FlutterMethodCall*)call result:(FlutterResult)result {
     NSString *src =call.arguments[@"src"];
     NSString *dest =call.arguments[@"dest"];
     NSString *password =call.arguments[@"password"];
-    NSDictionary *m1 =nil;
     BOOL success = [SSZipArchiveWithoutAES createZipFileAtPath:dest withFilesAtPaths:@[src] withPassword:password];
     if(success){
-        m1= @{
-              @"result":  @"success",
-              @"path": dest,
-              };
+        result(dest);
     }else{
-        m1= @{
-              @"result":  @"fail"
-              };
+        result([FlutterError errorWithCode:@"Failure"
+                                 message:nil
+                                 details:nil]);
     }
-    result(m1);
 }
 
 - (void)unzip:(FlutterMethodCall*)call result:(FlutterResult)result {
