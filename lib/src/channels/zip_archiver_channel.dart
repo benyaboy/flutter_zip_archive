@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_zip_archive/src/extensions/map/remove_null_values.dart';
 import 'dart:async';
 
 class ZipArchiverChannel {
@@ -11,11 +12,16 @@ class ZipArchiverChannel {
     @required String archiveDestinationDirectoryPath,
     String password,
   }) async {
-    return await _zipArchiveChannel.invokeMethod('zipFile', <String, dynamic>{
-      "src": sourceFilePath,
-      "dest": archiveDestinationDirectoryPath,
-      "password": password,
-    });
+    assert(sourceFilePath != null);
+    assert(archiveDestinationDirectoryPath != null);
+
+    return await _zipArchiveChannel.invokeMethod(
+        'zipFile',
+        <String, dynamic>{
+          "src": sourceFilePath,
+          "dest": archiveDestinationDirectoryPath,
+          "password": password,
+        }..removeNullValues());
   }
 
   Future<Map> invokeZipDirectoryMethod({
@@ -23,11 +29,16 @@ class ZipArchiverChannel {
     @required String archiveDestinationDirPath,
     String password,
   }) async {
-    return await _zipArchiveChannel.invokeMethod('zipDir', <String, dynamic>{
-      "src": sourceDirPath,
-      "dest": archiveDestinationDirPath,
-      "password": password,
-    });
+    assert(sourceDirPath != null);
+    assert(archiveDestinationDirPath != null);
+
+    return await _zipArchiveChannel.invokeMethod(
+        'zipDir',
+        <String, dynamic>{
+          "src": sourceDirPath,
+          "dest": archiveDestinationDirPath,
+          "password": password,
+        }..removeNullValues());
   }
 
   Future<String> invokeGetPlatformVersionMethod() {
@@ -39,10 +50,12 @@ class ZipArchiverChannel {
     @required String destinationPath,
     String password,
   }) {
-    return _zipArchiveChannel.invokeMethod('unzip', <String, dynamic>{
-      "zip": zipFilePath,
-      "dest": destinationPath,
-      "password": password,
-    });
+    return _zipArchiveChannel.invokeMethod(
+        'unzip',
+        <String, dynamic>{
+          "zip": zipFilePath,
+          "dest": destinationPath,
+          "password": password,
+        }..removeNullValues());
   }
 }
