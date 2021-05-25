@@ -14,3 +14,7 @@ example/android/app/app.iml
 GeneratedPluginRegistrant.java
 WorkspaceSettings.xcsettings
 Runner-Bridging-Header.h
+android/.gradle/
+android/.idea/
+android/build/
+android.iml
